@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import useFetch from "./hooks/useFetch";
 
+//30646926
 function App() {
+  const [listing, setListing] = useState("newstories");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data, loading, error } = useFetch(listing, currentPage);
+
+  const onChangePage = useCallback((page) => {
+    setCurrentPage(page);
+  }, []);
+
+  console.log(data, loading, error);
   return (
     <div className="App">
       <header className="App-header">
@@ -19,6 +31,7 @@ function App() {
           Learn React etret
         </a>
       </header>
+      <button onClick={() => setListing("topstories")}>change</button>
     </div>
   );
 }
