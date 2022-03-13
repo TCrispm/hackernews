@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import logo from "../../assets/images/HN.png";
 
@@ -11,6 +12,9 @@ const Header = ({ onChangeListing }) => {
         width: "100%",
         borderBottom: "1px solid #e5e7eb",
         height: "70px",
+        position: "fixed",
+        top: 0,
+        backgroundColor: "#FFF",
       }}
     >
       <div

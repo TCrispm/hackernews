@@ -1,16 +1,17 @@
 import React, { useCallback, useMemo, useState } from "react";
-import logo from "./logo.svg";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "./App.css";
 import useFetch from "./hooks/useFetch";
-import usePagination from "./hooks/usePagination";
 import Header from "./components/Header";
+import StoryList from "./components/StoryList";
+import Pagination from "./components/Pagination";
 
 //30646926
 function App() {
+  console.log("fetching");
   const [listing, setListing] = useState("newstories");
-
-  const { currentPage, setCurrentPage } = usePagination();
-  const { data, loading, error } = useFetch(listing, currentPage);
+  const { data, loading, error } = useFetch(listing);
 
   const title = useMemo(() => {
     switch (listing) {
@@ -23,36 +24,32 @@ function App() {
     }
   }, [listing]);
 
-  const onChangePage = useCallback((page) => {
-    setCurrentPage(page);
-  }, []);
-
   const onChangeListing = useCallback((newlisting) => {
     setListing(newlisting);
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something happens..</div>;
-  }
 
   console.log(data, loading, error);
   return (
     <div>
       <Header onChangeListing={onChangeListing} />
-      <div style={{ margin: "20px 50px" }}>
-        <div
-          style={{
-            fontWeight: 700,
-            fontSize: "1.5em",
-          }}
-        >
-          {title}
+      {error && <div>Something happens..</div>}
+      {!loading && !error && (
+        <div style={{ margin: "20px 50px", paddingTop: "80px" }}>
+          <div style={{ position: "fixed", top: 71 }}>
+            <Pagination />
+          </div>
+          <div
+            style={{
+              fontWeight: 700,
+              fontSize: "1.5em",
+              paddingTop: "2em",
+            }}
+          >
+            {title}
+          </div>
+          <StoryList data={data} />
         </div>
-      </div>
+      )}
     </div>
   );
 }

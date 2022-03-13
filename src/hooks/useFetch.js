@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import usePagination from "./usePagination";
+import { usePagination } from "../contexts/pagination";
+import { useStory } from "../contexts/story";
 
 const BASE_URL = "https://hacker-news.firebaseio.com/v0/";
 
-const useFetch = (listing, currentPage) => {
+const useFetch = (listing) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
-  const { setPageCount, pageSize } = usePagination();
+  const { setPageCount, pageSize, currentPage } = usePagination();
+  const { addLoadingStory, removeLoadingStory } = useStory();
 
   const { firstIndex, lastIndex } = useMemo(() => {
     const lastIndex = currentPage * pageSize;
@@ -18,17 +20,21 @@ const useFetch = (listing, currentPage) => {
       firstIndex,
       lastIndex,
     };
-  }, [pageSize]);
+  }, [pageSize, currentPage]);
 
   const fetchStory = async (id) => {
     try {
+      addLoadingStory(id);
       const response = await fetch(`${BASE_URL}item/${id}.json?print=pretty`);
       if (response.ok) {
+        //removeLoadingStory(id);
         return await response.json();
       } else {
         setError(`${response.status}: Error`);
+        //removeLoadingStory(id);
       }
     } catch (error) {
+      //removeLoadingStory(id);
       setError(error);
     }
   };
@@ -70,13 +76,14 @@ const useFetch = (listing, currentPage) => {
         } else {
           setPageCount(responseJson.length / pageSize);
         }
+        setLoading(false);
         const storyIds = responseJson.slice(firstIndex, lastIndex);
         let stories = await Promise.all(
           storyIds.map(async (story) => {
             return await fetchStory(story);
           })
         );
-
+        /*
         stories.map(async (story) => {
           if (story.kids && story.kids.length) {
             story.kids = await Promise.all(
@@ -85,14 +92,12 @@ const useFetch = (listing, currentPage) => {
               })
             );
           }
-        });
+        });*/
 
         setData(stories);
       } else {
         setError(`${response.status}: Error`);
       }
-
-      setLoading(false);
     } catch (error) {
       setError(error);
       setLoading(false);
@@ -101,7 +106,7 @@ const useFetch = (listing, currentPage) => {
 
   useEffect(() => {
     fetchData();
-  }, [listing]);
+  }, [listing, currentPage]);
 
   return {
     data,

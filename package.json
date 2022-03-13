@@ -7,8 +7,10 @@
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "dotenv": "^16.0.0",
+    "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-loading-skeleton": "^3.0.3",
     "react-scripts": "5.0.0",
     "web-vitals": "^2.1.4"
   },
@@ -39,6 +41,7 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
   "devDependencies": {
+    "@iconify/react": "^3.1.4",
     "eslint": "^8.10.0",
     "eslint-plugin-react": "^7.29.3",
     "prettier": "2.5.1"
