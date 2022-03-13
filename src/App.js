@@ -2,36 +2,57 @@ import React, { useCallback, useMemo, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import useFetch from "./hooks/useFetch";
+import usePagination from "./hooks/usePagination";
+import Header from "./components/Header";
 
 //30646926
 function App() {
   const [listing, setListing] = useState("newstories");
-  const [currentPage, setCurrentPage] = useState(1);
 
+  const { currentPage, setCurrentPage } = usePagination();
   const { data, loading, error } = useFetch(listing, currentPage);
+
+  const title = useMemo(() => {
+    switch (listing) {
+      case "newstories":
+        return "New Stories";
+      case "topstories":
+        return "Top Stories";
+      case "beststories":
+        return "Best Stories";
+    }
+  }, [listing]);
 
   const onChangePage = useCallback((page) => {
     setCurrentPage(page);
   }, []);
 
+  const onChangeListing = useCallback((newlisting) => {
+    setListing(newlisting);
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something happens..</div>;
+  }
+
   console.log(data, loading, error);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      <Header onChangeListing={onChangeListing} />
+      <div style={{ margin: "20px 50px" }}>
+        <div
+          style={{
+            fontWeight: 700,
+            fontSize: "1.5em",
+          }}
         >
-          Learn React etret
-        </a>
-      </header>
-      <button onClick={() => setListing("topstories")}>change</button>
+          {title}
+        </div>
+      </div>
     </div>
   );
 }
