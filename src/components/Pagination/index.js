@@ -14,6 +14,7 @@ const Pagination = () => {
           backgroundColor: "#fff",
           alignItems: "center",
           height: "60px",
+          width: "100vw",
         }}
       >
         <Icon

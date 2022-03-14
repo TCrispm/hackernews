@@ -27,14 +27,14 @@ const useFetch = (listing) => {
       addLoadingStory(id);
       const response = await fetch(`${BASE_URL}item/${id}.json?print=pretty`);
       if (response.ok) {
-        //removeLoadingStory(id);
+        removeLoadingStory(id);
         return await response.json();
       } else {
         setError(`${response.status}: Error`);
-        //removeLoadingStory(id);
+        removeLoadingStory(id);
       }
     } catch (error) {
-      //removeLoadingStory(id);
+      removeLoadingStory(id);
       setError(error);
     }
   };

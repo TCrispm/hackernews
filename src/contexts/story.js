@@ -4,8 +4,8 @@ import { createContext, useCallback, useState, useContext } from "react";
 
 const StoriesContext = createContext({
   loadingStories: [],
-  addLoadingStory: () => [],
-  removeLoadingStory: () => [],
+  addLoadingStory: () => {},
+  removeLoadingStory: () => {},
 });
 
 export const StoryProvider = (props) => {
@@ -14,7 +14,7 @@ export const StoryProvider = (props) => {
 
   const addLoadingStory = useCallback(
     (id) => {
-      setLoadingStories([...loadingStories, id]);
+      setLoadingStories((prevState) => [...prevState, id]);
     },
     [loadingStories]
   );

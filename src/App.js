@@ -28,7 +28,7 @@ function App() {
     setListing(newlisting);
   }, []);
 
-  console.log(data, loading, error);
+  console.log("loading", loading);
   return (
     <div>
       <Header onChangeListing={onChangeListing} />

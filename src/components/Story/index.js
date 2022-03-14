@@ -9,9 +9,9 @@ const Story = ({ item }) => {
   const { loadingStories } = useStory();
   const { descendants, score, time, title, url, by, id } = item;
 
-  console.log(loadingStories);
+  console.log("loadingStories", loadingStories);
   if (loadingStories.includes(id)) {
-    return <Skeleton count={3} />;
+    return <div>Loading...</div>;
   }
   return (
     <div
