@@ -1,10 +1,34 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Story from "../Story";
+import CommentSection from "../CommentSection";
+import Skeleton from "react-loading-skeleton";
 
-const StoryList = ({ data }) => {
+const StoryList = ({
+  data,
+  loading,
+  showCommentSection,
+  selectedStory,
+  setShowCommentSection,
+  setSelectedStory,
+}) => {
+  if (loading) {
+    return <Skeleton count={20} />;
+  }
+
+  const closeCommentSection = useCallback(() => {
+    setShowCommentSection(false);
+    setSelectedStory(undefined);
+  }, []);
+
   return (
     <div>
+      {showCommentSection && (
+        <CommentSection
+          selectedStory={selectedStory}
+          closeCommentSection={closeCommentSection}
+        />
+      )}
       {data.map((item) => (
         <div
           key={item.id}
@@ -17,7 +41,12 @@ const StoryList = ({ data }) => {
             margin: "0.5em 0",
           }}
         >
-          <Story item={item} />
+          <Story
+            item={item}
+            setShowCommentSection={setShowCommentSection}
+            setComments={setShowCommentSection}
+            setSelectedStory={setSelectedStory}
+          />
         </div>
       ))}
     </div>

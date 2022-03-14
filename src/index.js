@@ -3,15 +3,12 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { StoryProvider } from "./contexts/story";
 import { PaginationProvider } from "./contexts/pagination";
 
 ReactDOM.render(
   <React.StrictMode>
     <PaginationProvider>
-      <StoryProvider>
-        <App />
-      </StoryProvider>
+      <App />
     </PaginationProvider>
   </React.StrictMode>,
   document.getElementById("root")

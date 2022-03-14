@@ -6,12 +6,14 @@ import useFetch from "./hooks/useFetch";
 import Header from "./components/Header";
 import StoryList from "./components/StoryList";
 import Pagination from "./components/Pagination";
+import { usePagination } from "./contexts/pagination";
 
-//30646926
 function App() {
-  console.log("fetching");
   const [listing, setListing] = useState("newstories");
-  const { data, loading, error } = useFetch(listing);
+  const { loading, error, stories } = useFetch(listing);
+  const [showCommentSection, setShowCommentSection] = useState(false);
+  const [selectedStory, setSelectedStory] = useState();
+  const { setCurrentPage } = usePagination();
 
   const title = useMemo(() => {
     switch (listing) {
@@ -25,18 +27,23 @@ function App() {
   }, [listing]);
 
   const onChangeListing = useCallback((newlisting) => {
+    setCurrentPage(1);
+    setShowCommentSection(false);
+    setSelectedStory(undefined);
     setListing(newlisting);
   }, []);
 
-  console.log("loading", loading);
   return (
     <div>
-      <Header onChangeListing={onChangeListing} />
+      <Header onChangeListing={onChangeListing} listing={listing} />
       {error && <div>Something happens..</div>}
-      {!loading && !error && (
+      {!error && (
         <div style={{ margin: "20px 50px", paddingTop: "80px" }}>
           <div style={{ position: "fixed", top: 71 }}>
-            <Pagination />
+            <Pagination
+              setShowCommentSection={setShowCommentSection}
+              setSelectedStory={setSelectedStory}
+            />
           </div>
           <div
             style={{
@@ -47,7 +54,14 @@ function App() {
           >
             {title}
           </div>
-          <StoryList data={data} />
+          <StoryList
+            data={stories}
+            loading={loading}
+            showCommentSection={showCommentSection}
+            selectedStory={selectedStory}
+            setSelectedStory={setSelectedStory}
+            setShowCommentSection={setShowCommentSection}
+          />
         </div>
       )}
     </div>

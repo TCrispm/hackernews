@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePagination } from "../contexts/pagination";
-import { useStory } from "../contexts/story";
 
 const BASE_URL = "https://hacker-news.firebaseio.com/v0/";
 
 const useFetch = (listing) => {
   const [data, setData] = useState([]);
+  const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
-  const { setPageCount, pageSize, currentPage } = usePagination();
-  const { addLoadingStory, removeLoadingStory } = useStory();
+  const { setPageCount, pageSize, currentPage, setCurrentPage } =
+    usePagination();
 
   const { firstIndex, lastIndex } = useMemo(() => {
     const lastIndex = currentPage * pageSize;
@@ -24,18 +24,31 @@ const useFetch = (listing) => {
 
   const fetchStory = async (id) => {
     try {
-      addLoadingStory(id);
       const response = await fetch(`${BASE_URL}item/${id}.json?print=pretty`);
       if (response.ok) {
-        removeLoadingStory(id);
         return await response.json();
       } else {
         setError(`${response.status}: Error`);
-        removeLoadingStory(id);
       }
     } catch (error) {
-      removeLoadingStory(id);
       setError(error);
+    }
+  };
+
+  const fetchStories = async () => {
+    try {
+      setLoading(true);
+      const storyIds = data.slice(firstIndex, lastIndex);
+      const storiesList = await Promise.all(
+        storyIds.map(async (story) => {
+          return await fetchStory(story);
+        })
+      );
+      setStories(storiesList);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,7 +80,6 @@ const useFetch = (listing) => {
 
   const fetchData = async () => {
     try {
-      setLoading(true);
       const response = await fetch(`${BASE_URL}${listing}.json?print=pretty`);
       if (response.ok) {
         const responseJson = await response.json();
@@ -76,42 +88,31 @@ const useFetch = (listing) => {
         } else {
           setPageCount(responseJson.length / pageSize);
         }
-        setLoading(false);
-        const storyIds = responseJson.slice(firstIndex, lastIndex);
-        let stories = await Promise.all(
-          storyIds.map(async (story) => {
-            return await fetchStory(story);
-          })
-        );
-        /*
-        stories.map(async (story) => {
-          if (story.kids && story.kids.length) {
-            story.kids = await Promise.all(
-              story.kids.map(async (comment) => {
-                return await fetchComment(comment);
-              })
-            );
-          }
-        });*/
-
-        setData(stories);
+        setData(responseJson);
       } else {
         setError(`${response.status}: Error`);
       }
     } catch (error) {
       setError(error);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, [listing, currentPage]);
+  }, [listing]);
+
+  useEffect(() => {
+    if (data && data.length) {
+      fetchStories();
+    }
+  }, [currentPage, data]);
 
   return {
     data,
     loading,
     error,
+    stories,
+    fetchComment,
   };
 };
 

@@ -2,7 +2,7 @@
 import React from "react";
 import logo from "../../assets/images/HN.png";
 
-const Header = ({ onChangeListing }) => {
+const Header = ({ onChangeListing, listing }) => {
   return (
     <div
       style={{
@@ -49,7 +49,7 @@ const Header = ({ onChangeListing }) => {
             marginRight: "50px",
             cursor: "pointer",
             fontSize: 18,
-            color: "#1f3b52",
+            color: listing === "newstories" ? "#f48414" : "#1f3b52",
           }}
           onClick={() => onChangeListing("newstories")}
         >
@@ -60,7 +60,7 @@ const Header = ({ onChangeListing }) => {
             marginRight: "50px",
             cursor: "pointer",
             fontSize: 18,
-            color: "#1f3b52",
+            color: listing === "topstories" ? "#f48414" : "#1f3b52",
           }}
           onClick={() => onChangeListing("topstories")}
         >
@@ -71,7 +71,7 @@ const Header = ({ onChangeListing }) => {
             marginRight: "50px",
             cursor: "pointer",
             fontSize: 18,
-            color: "#1f3b52",
+            color: listing === "beststories" ? "#f48414" : "#1f3b52",
           }}
           onClick={() => onChangeListing("beststories")}
         >

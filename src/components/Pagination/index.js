@@ -1,9 +1,16 @@
+/* eslint-disable react/prop-types */
 import React, { useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { usePagination } from "../../contexts/pagination";
 
-const Pagination = () => {
+const Pagination = ({ setShowCommentSection, setSelectedStory }) => {
   const { currentPage, setCurrentPage, pageCount } = usePagination();
+
+  const onChangePage = useCallback((page) => {
+    setCurrentPage(page);
+    setShowCommentSection(false);
+    setSelectedStory(undefined);
+  }, []);
 
   const renderNumbers = useCallback(() => {
     return (
@@ -17,14 +24,17 @@ const Pagination = () => {
           width: "100vw",
         }}
       >
-        <Icon
-          icon="ant-design:arrow-left-outlined"
-          style={{ marginRight: "15px" }}
-        />
+        {currentPage > 1 && (
+          <Icon
+            icon="ant-design:arrow-left-outlined"
+            style={{ marginRight: "15px", cursor: "pointer" }}
+            onClick={() => onChangePage(currentPage - 1)}
+          />
+        )}
 
         {[...Array(pageCount)].map((e, index) => (
           <div
-            onClick={() => setCurrentPage(index + 1)}
+            onClick={() => onChangePage(index + 1)}
             style={{
               marginRight: "15px",
               padding: "5px",
@@ -38,12 +48,17 @@ const Pagination = () => {
             {index + 1}
           </div>
         ))}
-        <Icon icon="ant-design:arrow-right-outlined" />
+        {currentPage < pageCount && (
+          <Icon
+            icon="ant-design:arrow-right-outlined"
+            style={{ cursor: "pointer" }}
+            onClick={() => onChangePage(currentPage + 1)}
+          />
+        )}
       </div>
     );
   }, [pageCount, currentPage]);
 
-  console.log("pagination", pageCount, currentPage, renderNumbers());
   return <div>{renderNumbers()}</div>;
 };
 

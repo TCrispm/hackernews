@@ -1,28 +1,34 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
-import Skeleton from "react-loading-skeleton";
 
-import { useStory } from "../../contexts/story";
-
-const Story = ({ item }) => {
-  const { loadingStories } = useStory();
+const Story = ({ item, setShowCommentSection, setSelectedStory }) => {
   const { descendants, score, time, title, url, by, id } = item;
-
-  console.log("loadingStories", loadingStories);
-  if (loadingStories.includes(id)) {
-    return <div>Loading...</div>;
-  }
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column" }}
-      onClick={() => (window.location.href = url)}
-    >
-      <div style={{ display: "flex", fontWeight: 700 }}>{title}</div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{ display: "flex", fontWeight: 700, cursor: "pointer" }}
+        onClick={() => (window.location.href = url)}
+      >
+        {title}
+      </div>
       <div
         style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
       >
-        {score} point | {descendants} comments | {moment(time).fromNow} by {by}
+        {score} point |{" "}
+        <span
+          onClick={(e) => {
+            e.preventDefault();
+            if (descendants !== 0) {
+              setSelectedStory(item);
+              setShowCommentSection(true);
+            }
+          }}
+          style={{ cursor: descendants !== 0 && "pointer", padding: "0px 2px" }}
+        >
+          {descendants} comments
+        </span>{" "}
+        | {moment(new Date(time) * 1000).from(Date.now())} by {by}
       </div>
     </div>
   );
