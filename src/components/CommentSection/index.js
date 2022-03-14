@@ -34,7 +34,6 @@ const CommentSection = ({ selectedStory, closeCommentSection }) => {
   useEffect(() => {
     callComments();
   }, [selectedStory]);
-  console.log("comments", comments);
 
   return (
     <div
