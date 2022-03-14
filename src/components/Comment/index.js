@@ -19,6 +19,15 @@ const Comment = ({ comment }) => {
           {moment(new Date(comment.time) * 1000).from(Date.now())} by{" "}
           {comment.by}
         </div>
+        {comment.kids &&
+          comment.kids.length &&
+          comment.kids.map((comment) => {
+            return (
+              <div key={comment.id}>
+                <Comment comment={comment} />
+              </div>
+            );
+          })}
       </div>
     </div>
   );
